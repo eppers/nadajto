@@ -1,0 +1,29 @@
+Options +FollowSymLinks -Indexes
+RewriteEngine On
+
+#php_value safe_mode off
+#php_value implict_flush off
+#php_value register_globals off
+#php_value output_buffering 65536
+#php_value memory_limit "16M"
+#php_value post_max_size "512K"
+#php_value upload_max_filesize "512K"
+#php_value max_execution_time 120
+#php_value session.use_trans_sid 0
+
+RewriteCond %{HTTP_HOST} ^www\.nadajto\.pl$ [NC]
+RewriteRule ^(.*)$ http://nadajto.pl/$1 [R=301,L]
+
+RewriteRule ^loadpage$ ax_load.php [QSA,L]
+RewriteRule ^track$ ax_track.php [QSA,L]
+RewriteRule ^api$ scapi.php [QSA,L]
+RewriteRule ^error$ _error.php [QSA,L]
+RewriteRule ^sendform$ sendf.php [QSA,L]
+RewriteRule ^sendoffer$ sendo.php [QSA,L]
+
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*) index.php?qs=$1 [L,QSA]
+
+DirectoryIndex index.php index.html

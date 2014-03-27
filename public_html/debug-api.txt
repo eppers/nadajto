@@ -1,0 +1,13 @@
+array (
+  0 => 'rodzaj=1',
+  1 => 'pkg_weight=0%2C5',
+  2 => 'pkg_length=15',
+  3 => 'pkg_width=15',
+  4 => 'pkg_height=15',
+  5 => 'kraj=177',
+  6 => 'ups_Insurance=360',
+  7 => 'data_nad=',
+  8 => 'Insurance_input=',
+  9 => 'COD_input=',
+  10 => 'account-no=',
+)

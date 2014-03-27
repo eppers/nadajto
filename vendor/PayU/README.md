@@ -1,0 +1,1 @@
+Please copy sdk (https://github.com/payu/openpayu_php) to this folder
