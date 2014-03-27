@@ -1,17 +1,10 @@
 <?php
-/*
- if(isset($_GET['enter']) && ($_SERVER['PHP_AUTH_USER'] != 'nadajto' || $_SERVER['PHP_AUTH_PW'] != 'admin12'))
- {
-   header('WWW-Authenticate: Basic realm="Nadajto"');
-   header('HTTP/1.0 401 Unauthorized');
-   die(file_get_contents('index.html'));
 
- }
-  elseif($_SERVER['PHP_AUTH_USER'] != 'nadajto')
+ if($_SERVER['REMOTE_ADDR']!='83.30.175.215')
  {
 	die(file_get_contents('index.html'));
  }
-*/
+
 
 
   error_reporting(E_ALL);
