@@ -386,7 +386,7 @@ class Tools extends \lib\Tools{
             $wsdl = $GLOBALS['REALPATH']."/lib/UPS/wsdl/Ship.wsdl";
             $operation = "ProcessShipment";
             //$endpointurl = 'https://wwwcie.ups.com/webservices/Ship'; //wersja test
-            $endpointurl = 'https://wwwcie.ups.com/webservices/Ship'; //wersja prod
+            $endpointurl = 'https://onlinetools.ups.com/webservices/Ship'; //wersja prod
             
 
           try {
@@ -442,7 +442,7 @@ class Tools extends \lib\Tools{
        
             $wsdl = $GLOBALS['REALPATH']."/lib/UPS/wsdl/Pickup.wsdl";
             $operation = "ProcessPickupCreation";
-            $endpointurl = 'https://wwwcie.ups.com/webservices/Pickup';
+            $endpointurl = 'https://onlinetools.ups.com/webservices/Pickup';
             
             $i = 0;//retry number start
             
@@ -499,7 +499,7 @@ class Tools extends \lib\Tools{
     public function delete_shipment($ptracknum){
 		$wsdl = $GLOBALS['REALPATH']."/lib/UPS/wsdl/Void.wsdl";
 	  	$operation = "ProcessVoid";
-  		$endpointurl = 'https://wwwcie.ups.com/webservices/Void';
+  		$endpointurl = 'https://onlinetools.ups.com/webservices/Void';
 		try
 		{
 			$client=$this->generate_soap($wsdl,$endpointurl);
@@ -540,7 +540,7 @@ class Tools extends \lib\Tools{
   
   		$wsdl = $GLOBALS['REALPATH']."/lib/UPS/wsdl/Track.wsdl";
 	  	$operation = "ProcessTrack";
-  		$endpointurl = 'https://wwwcie.ups.com/webservices/Track';
+  		$endpointurl = 'https://onlinetools.ups.com/webservices/Track';
 		try
 		{
 			$client=$this->generate_soap($wsdl,$endpointurl);
@@ -599,7 +599,7 @@ class Tools extends \lib\Tools{
 	public function address_checker($address){
 		$wsdl = "c:/inetpub/wwwroot/cgi-bin/IncludeCode/UPS/XAV.wsdl";
 	  	$operation = "ProcessXAV";
-	  	$endpointurl = "https://wwwcie.ups.com/webservices/XAV";
+	  	$endpointurl = "https://onlinetools.ups.com/webservices/XAV";
 		try
 		{
 			$client=$this->generate_soap($wsdl,$endpointurl);
@@ -655,7 +655,7 @@ class Tools extends \lib\Tools{
 	public function transit_time($shipDate){
 	  $wsdl = "c:/inetpub/wwwroot/cgi-bin/IncludeCode/UPS/TNTWS.wsdl";
 	  $operation = "ProcessTimeInTransit";
-	  $endpointurl = "https://wwwcie.ups.com/webservices/";
+	  $endpointurl = "https://onlinetools.ups.com/webservices/";
 	  try
 		{
 			$client=$this->generate_soap($wsdl,$endpointurl);

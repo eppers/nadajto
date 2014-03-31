@@ -1,6 +1,6 @@
 <?php
 
- if($_SERVER['REMOTE_ADDR']!='83.30.175.215')
+ if($_SERVER['REMOTE_ADDR']!='83.30.132.4')
  {
 	die(file_get_contents('index.html'));
  }
@@ -61,6 +61,8 @@ require '../lib/CourierManager.php';
 require '../lib/CourierAdditional.php';
 require '../lib/Tools.php';
 require '../lib/Delivery.php';
+require '../lib/Prepay.php';
+
 require '../lib/UPS/Tools.php';
 require '../lib/UPS/Label.php';
 require '../lib/UPS/Parcel.php';

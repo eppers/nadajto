@@ -615,8 +615,10 @@ function ship(from,to,pkg,date) {
                $j('#oauth_token').val(data.token);
                
                //jezeli nie jest to input typu text to wrzucic tooltip z dymkiem gdzie info jest z msg obok danego pola
-                
-                if(data.prepay == 'prepay') {
+                if(data.error != undefined) {
+                    alert('Wystąpił błąd. '+data.error);
+                }                
+                else if(data.prepay == 'prepay') {
                     alert('Opłata została pobrana ze skarbonki. Etykieta powinna zostać wysłana na Twój email');
                 }
                 else if(data.input == undefined) {

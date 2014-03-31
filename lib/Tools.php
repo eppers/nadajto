@@ -150,7 +150,7 @@ class Tools {
     }
     
     /*
-     * Funkcja z danyc przeslanych tworzy parcel, order oraz delivery w bazie przygotowując
+     * Funkcja z danych przeslanych tworzy parcel, order oraz delivery w bazie przygotowując
      * do wykorzystania metody shipFromDb
      * 
      * @param array $data, int $userId

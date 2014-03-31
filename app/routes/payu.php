@@ -20,21 +20,26 @@ $app->post('/payment/payu/sending', function () use ($app) {
         $orderName = 'Przesyłka kurierska';
 
         if($user->prepays()->filter('sum')>=$order->price && $user->onetime==0) {
-            $prepay = \Model::factory('Prepay')->create();
-            $prepay->id_customer = $userId;
-            $prepay->date = date('Y-m-d H:i:s');
-            $prepay->id_order = $order->id_order;
-            $prepay->amount -= $order->price;
-            $prepay->save();
-
-            SendMail($delivery->from_email, array('EMAIL'=>$delivery->from_email), 8);
-            //SendMail('marcin.jastrzebski@poludniowo.pl', array('ID'=>$prepay->id_order), 9);
-            $courierManager = new \lib\CourierManager($order->id_courier);
-            $courier = $courierManager->getCourier();
-            if(!$courier->ship_from_db($prepay->id_order)) file_put_contents("debug.txt", "Błąd w trakcie wysyłania danych kurierowi \n\n",FILE_APPEND);
-            else file_put_contents("debug.txt", "kurier wysłany \n\n",FILE_APPEND);
-
-            echo json_encode(array('prepay'=>'prepay'));
+            try {
+                $prepay = new \lib\Prepay();
+                $prepay->addPrepayForOrder($order);
+                $prepayId = $prepay->getId();
+                
+                if(!empty($prepayId)) {
+                    SendMail($delivery->from_email, array('EMAIL'=>$delivery->from_email), 8);
+                    SendMail('marcin.jastrzebski@poludniowo.pl', array('ID'=>$prepay->id_order), 9);
+                    $courierManager = new \lib\CourierManager($order->id_courier);
+                    $courier = $courierManager->getCourier();
+                    if(!$courier->ship_from_db($order->id_order)) throw new Exception('Błąd w trakcie wysyłania danych kurierowi dla tego zamówienia. Skontakuj się z nadajto.');
+                    else {
+                        $result = array('prepay'=>'prepay');
+                    }
+                } else throw new Exception('Błąd w trakcie generowania zamówienia dla płatności PREPAY');
+            } catch (Exception $e) {
+                $result = array('error' => $e->getMessage());
+            }
+            
+            echo json_encode($result);
             exit();
         }
 
@@ -83,7 +88,6 @@ $app->post('/payment/payu/sending', function () use ($app) {
             'NotifyUrl' => $myUrl . '/payment/payu/notify', // url where payu service will send notification with order processing status changes
             'OrderCancelUrl' => $myUrl . '/payment/payu/cancel',
             'OrderCompleteUrl' => $myUrl . '/payment/payu/succes/'.$order->id_order,
-            'OrderId' => $order->id_order,
             'Order' => $orderPayU
         );
 
