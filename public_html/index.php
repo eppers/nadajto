@@ -1,9 +1,9 @@
 <?php
 
- if($_SERVER['REMOTE_ADDR']!='83.30.132.4')
- {
-	die(file_get_contents('index.html'));
- }
+// if($_SERVER['REMOTE_ADDR']!='83.30.129.144')
+// {
+//	die(file_get_contents('index.html'));
+// }
 
 
 
@@ -62,6 +62,7 @@ require '../lib/CourierAdditional.php';
 require '../lib/Tools.php';
 require '../lib/Delivery.php';
 require '../lib/Prepay.php';
+require '../lib/Api.php';
 
 require '../lib/UPS/Tools.php';
 require '../lib/UPS/Label.php';
@@ -107,6 +108,7 @@ require '../app/routes/ups.php';
 require '../app/routes/ajax.php';
 require '../app/routes/customer.php';
 require '../app/routes/admin.php';
+require '../app/routes/api.php';
 
 define("FPDF_FONTPATH",$GLOBALS['REALPATH']."/vendor/Fpdf/font/");
 

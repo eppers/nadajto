@@ -5,6 +5,7 @@ $app->get('/api/generuj', function () use ($app) {
 });
 
 $app->post('/api/rate', function () use ($app) {
+
     $courier = new \lib\Tools;
     $respond = array();
      
@@ -15,7 +16,7 @@ $app->post('/api/rate', function () use ($app) {
     $api = new \lib\Api;
     
     $stringRate = $sep = ''; 
-    
+    file_put_contents('debug-api.txt',$input);
     foreach( $input as $key => $value ) {
       $stringRate .= $sep . $key . '=' . $value;
       $sep = '&';
@@ -46,4 +47,48 @@ $app->post('/api/rate', function () use ($app) {
     $app->response()->header('Content-Type', 'application/json');
     print json_encode($respond);  
 });
+
+
+$app->post('/api/ship', function () use ($app) {
+   // $tools = new \lib\Tools();
+    print json_encode(var_export($app->request()->post(),true));
+      //  var_dump($app->request()->post());
+    //die();
+//    $result = $tools->prepareDataToShip($app->request()->post(),$_SESSION['user']['id_customer']);
+
+//    if($result===true) {
+//        $user = $tools->customer;
+//        $order = $tools->order;
+//        $delivery = $tools->delivery;
+//
+//        $directory = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+//        $myUrl = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? 'https://' : 'http://') . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] .$directory;
+//
+//        $orderName = 'Przesyłka kurierska';
+//
+//        if($user->prepays()->filter('sum')>=$order->price && $user->onetime==0) {
+//            try {
+//                $prepay = new \lib\Prepay();
+//                $prepay->addPrepayForOrder($order);
+//                $prepayId = $prepay->getId();
+//                
+//                if(!empty($prepayId)) {
+//                    SendMail($delivery->from_email, array('EMAIL'=>$delivery->from_email), 8);
+//                    SendMail('marcin.jastrzebski@poludniowo.pl', array('ID'=>$prepay->id_order), 9);
+//                    $courierManager = new \lib\CourierManager($order->id_courier);
+//                    $courier = $courierManager->getCourier();
+//                    if(!$courier->ship_from_db($order->id_order)) throw new Exception('Błąd w trakcie wysyłania danych kurierowi dla tego zamówienia. Skontakuj się z nadajto.');
+//                    else {
+//                        $result = array('prepay'=>'prepay');
+//                    }
+//                } else throw new Exception('Błąd w trakcie generowania zamówienia dla płatności PREPAY');
+//            } catch (Exception $e) {
+//                $result = array('error' => $e->getMessage());
+//            }
+//            
+//            echo json_encode($result);
+//            exit();
+//        }
+//    }
+});        
 ?>
