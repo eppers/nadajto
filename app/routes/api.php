@@ -50,11 +50,64 @@ $app->post('/api/rate', function () use ($app) {
 
 
 $app->post('/api/ship', function () use ($app) {
-   // $tools = new \lib\Tools();
-    print json_encode(var_export($app->request()->post(),true));
+
+    //czy user ma kase na koncie
+    try {
+        $request = $app->request();
+        $body = $request->getBody();
+        $input = json_decode($body,true);
+        $api = new \lib\Api;
+
+        $stringOrderDetails = $sep = ''; 
+        file_put_contents('debug-api.txt',$input);
+        foreach( $input as $key => $value ) {
+            $stringOrderDetails .= $sep . $key . '=' . $value;
+            $sep = '&';
+        }
+        file_put_contents('debug-api.txt',$stringOrderDetails);
+
+        if(!$api->loginCheck($input['login'], $input['password'], $input['apiKey']))
+            throw new Exception('Autoryzacja nie powiodła się.');
+        
+        $customer = \Model::factory('Customer')->where_raw('(`api` = ? AND `email` = ?)', array($input['apiKey'], $input['login']))->find_one();
+        
+        if($customer instanceof \Customer) {
+            $dataSend = array(
+                'weight' => $input['pkg_weight'],
+                'length' => $input['pkg_depth'],
+                'width' => $input['pkg_width'],
+                'height' => $input['pkg_height'],
+                'pkg_type' => $input['rodzaj'],
+                'nad_email' => $customer->email,
+                'nad_email2' => $customer->email,
+                'nad_company' => $customer->company,
+                'nad_imie' => $customer->name,
+                'nad_nazwisko' => $customer->lname,
+                'nad_addr' => $customer->addr,
+                'nad_miasto' => $customer->city,
+                'nad_zip' => $customer->zip,
+                'nad_telef' => $customer->phone,
+                'odb_email' => $input['details']['receiverEmail'],
+                'odb_email2' => $input['details']['receiverEmail'],
+                'odb_company' => $input['details']['receiverName'],
+                'odb_addr' => $input['details']['receiverStreet'],
+                'odb_miasto' => $input['details']['receiverCity'],
+                'odb_zip' => $input['details']['receiverZipCode'],
+                'odb_telef' => $input['details']['receiverPhoneNumber'],
+                'form' => $stringOrderDetails
+            );
+            $tools = new \lib\Tools();
+            $result = $tools->prepareDataToShip($app->request()->post(),$customer->id_customer, true);
+        }
+        
+    } catch(Exception $e) {
+        print json_encode(array('faultstring'=>$e->getMessage()));
+    }
+   
+    //print json_encode(var_export($app->request()->post(),true));
       //  var_dump($app->request()->post());
     //die();
-//    $result = $tools->prepareDataToShip($app->request()->post(),$_SESSION['user']['id_customer']);
+    
 
 //    if($result===true) {
 //        $user = $tools->customer;
