@@ -153,7 +153,7 @@ class Tools {
      * Funkcja z danych przeslanych tworzy parcel, order oraz delivery w bazie przygotowując
      * do wykorzystania metody shipFromDb
      * 
-     * @param array $data, int $userId
+     * @param array $data, int $userId, bool $dataFromApi
      * @return mixed
      */
     public function prepareDataToShip(array $data, $userId = NULL, $dataFromApi = false) {
@@ -197,7 +197,8 @@ class Tools {
         $odb_company = clearName($odb_company);    
         $nad_nip = preg_replace('/[^\s0-9\-]/u', "", trim($data['nad_nip']));
         $odb_nip = preg_replace('/[^\s0-9\-]/u', "", trim($data['odb_nip']));
-        if($data['bank']!=='false') {
+        $dataBank = $data['bank'] === 'false'? false: $data['bank'];
+        if($dataBank!==false) {
             if(!$bank = onlyNumber($data['bank'])) {$error['input'][] = 'account-no'; $error['msg'][] = 'Niepoprawny numer konta';};
         }
 
@@ -206,12 +207,12 @@ class Tools {
         if(!$from_name = clearName($data['nad_imie'])) {$error['input'][] = 'nad_imie'; $error['msg'][] = 'Niepoprawne imię';};
         if(!$from_lname = clearName($data['nad_nazwisko'])) {$from_lname='';};
         if(!$from_addr = clearName($data['nad_addr'])) {$error['input'][] = 'nad_ulica'; $error['msg'][] = 'Niepoprawna ulica';};
-        if(!$from_addr_house = clearName($data['nad_nrdomu']) && $dataFromApi===false) {$error['input'][] = 'nad_nrdomu'; $error['msg'][] = 'Niepoprawny numer';};
+        if((!$from_addr_house = clearName($data['nad_nrdomu'])) && $dataFromApi==false) {$error['input'][] = 'nad_nrdomu'; $error['msg'][] = 'Niepoprawny numer domu';};
 
         if(!$to_name = clearName($data['odb_imie'])) {$error['input'][] = 'odb_imie'; $error['msg'][] = 'Niepoprawne imię';};
         if(!$to_lname = clearName($data['odb_nazwisko'])) {$to_lname='';};
         if(!$to_addr = clearName($data['odb_addr'])) {$error['input'][] = 'odb_ulica'; $error['msg'][] = 'Niepoprawna ulica';};
-        if(!$to_addr_house = clearName($data['odb_nrdomu']) && $dataFromApi===false) {$error['input'][] = 'odb_nrdomu'; $error['msg'][] = 'Niepoprawny numer';};
+        if((!$to_addr_house = clearName($data['odb_nrdomu'])) && $dataFromApi==false) {$error['input'][] = 'odb_nrdomu'; $error['msg'][] = 'Niepoprawny numer domu';};
 
         $courier = \Model::factory('Courier')->find_one($data['courierid']);
         $result = array();
@@ -387,7 +388,7 @@ class Tools {
 
         if($delivery->from_zip) {
 
-            $zip = clearZip($data['nad_zip']);
+            $zip = setProperZipType(clearZip($data['nad_zip']));
             $cityFrom = onlyLetter($data['nad_miasto']);
             $cities = \Model::factory('City')->where('pna',$zip)->find_many();
             $okCity = 0;

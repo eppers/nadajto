@@ -118,4 +118,10 @@ function Utf2Iso($str) {
     return iconv("utf-8", "iso-8859-2", $str);
 }
 
+function setProperZipType($zip) {
+  if(strpos($zip,'-')===false)
+    $zip = substr_replace($zip, '-', 2, 0);
+  return $zip;
+}
+
 ?>

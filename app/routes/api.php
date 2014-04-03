@@ -70,6 +70,8 @@ $app->post('/api/ship', function () use ($app) {
             throw new Exception('Autoryzacja nie powiodła się.');
         
         $customer = \Model::factory('Customer')->where_raw('(`api` = ? AND `email` = ?)', array($input['apiKey'], $input['login']))->find_one();
+        if(!empty($input['COD_check'])) $bankAcc = $customer->bank_acc;
+        else $bankAcc = false; 
         
         if($customer instanceof \Customer) {
             $dataSend = array(
@@ -90,14 +92,17 @@ $app->post('/api/ship', function () use ($app) {
                 'odb_email' => $input['details']['receiverEmail'],
                 'odb_email2' => $input['details']['receiverEmail'],
                 'odb_company' => $input['details']['receiverName'],
+                'odb_imie' => $input['details']['receiverName'],
                 'odb_addr' => $input['details']['receiverStreet'],
                 'odb_miasto' => $input['details']['receiverCity'],
                 'odb_zip' => $input['details']['receiverZipCode'],
                 'odb_telef' => $input['details']['receiverPhoneNumber'],
+                'bank' => $bankAcc,
                 'form' => $stringOrderDetails
             );
             $tools = new \lib\Tools();
-            $result = $tools->prepareDataToShip($app->request()->post(),$customer->id_customer, true);
+            $result = $tools->prepareDataToShip($dataSend,$customer->id_customer, true);
+            print json_encode(array('faultstring'=>$result));
         }
         
     } catch(Exception $e) {

@@ -4,37 +4,36 @@ namespace UPS;
 // interface with UPS
 class Tools extends \lib\Tools{
   //Configuration
-        private $environment = 'wwwcie'; //onlinetools
+    private $environment = 'onlinetools';//'wwwcie'; //onlinetools
 
-
-        private $to_address;
+    private $to_address;
   	private $shipment_details;
   	private $carrier,$residential,$signatureRequired,$saturdayDelivery;
-        private $pickup;
+    private $pickup;
   	
-	private $from_address;
-	private $ordernum;
-        private $cod;
-        private $insurance;
-        private $notstand;
-        private $rod;
+	  private $from_address;
+	  private $ordernum;
+    private $cod;
+    private $insurance;
+    private $notstand;
+    private $rod;
         
-	public $trackingnumber,$shipcost;
-	public $EPLlabel='EPL';	//0 if PNG,1 if EPL;
-	public $pkgweight, $pkgdimensions, $pkgType = 02, $pkgService = 'st';
+	  public $trackingnumber,$shipcost;
+	  public $EPLlabel='EPL';	//0 if PNG,1 if EPL;
+	  public $pkgweight, $pkgdimensions, $pkgType = 02, $pkgService = 'st';
   
-	private $access = UPSaccess;
+	  private $access = UPSaccess;
   	private $userid = UPSuserid;
   	private $passwd = UPSpasswd;
   	private $accountnum = UPSaccountnum;
-        private $outputFileName = "XOLTResult.xml";
-        private $outputPickupFileName = "XOLTResultPickup.xml";
+    private $outputFileName = "XOLTResult.xml";
+    private $outputPickupFileName = "XOLTResultPickup.xml";
 
-        private $shippingmethod;
-        private $allowNameLength = 22;
-        private $courierId = 1;
+    private $shippingmethod;
+    private $allowNameLength = 22;
+    private $courierId = 1;
 
-        private $pickupRetryNumber = 3;
+    private $pickupRetryNumber = 3;
     
     function ship_from_db($id) {
         
