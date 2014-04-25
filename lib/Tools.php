@@ -9,7 +9,7 @@ class Tools {
   private $delivery;
     
     
-  public function rate($post) {
+  public function rate($post,$discount=0) {
       file_put_contents('debug-api.txt',$post);
     $couriers = \Model::factory('Courier')->find_many();
     $result = array();
@@ -19,8 +19,18 @@ class Tools {
     $dim['width'] = 1;
     $dim['height'] = 1;
 
+    //TODO uzyc parse_str
     $formArray = explode('&', $post['form']);
     file_put_contents('debug-api.txt',var_export($formArray,true));
+    
+    //discount dla API
+    $login=explode("=", $formArray[0]);
+    if($login[0]==='login') {
+        $customer = \Model::factory('Customer')->where('email',$login[1])->find_one();
+        if($customer instanceof \Customer)
+            $discount = $customer->discount;
+    }
+
     //Parcel data
     if($key = array_find('pkg_weight',$formArray)) {
         $val = explode('=',$formArray[$key]);
@@ -52,7 +62,7 @@ class Tools {
                 }
                 if($parcel) {
                     
-                    $result[$courier->id_courier]['price_net']= number_format($parcel->getPrice()-$parcel->getPrice()*$_SESSION['user']['discount']/100, 2, '.', '');
+                    $result[$courier->id_courier]['price_net']= number_format($parcel->getPrice()-$parcel->getPrice()*$discount/100, 2, '.', '');
                     $result[$courier->id_courier]['price_brut'] = number_format($result[$courier->id_courier]['price_net']+$result[$courier->id_courier]['price_net']*$GLOBALS['CONFIG']['vat']/100, 2, '.', '');
                     $result[$courier->id_courier]['notstand'] = $parcel->getNotstand();
                 } else {
@@ -70,7 +80,7 @@ class Tools {
                         $price2 = $additional->getPrice();
 
                         if(is_numeric($price2)) {
-                            $result[$courier->id_courier]['price_net'] = number_format($result[$courier->id_courier]['price_net'] + ($price2-$price2*$_SESSION['user']['discount']/100), 2, '.', '');
+                            $result[$courier->id_courier]['price_net'] = number_format($result[$courier->id_courier]['price_net'] + ($price2-$price2*$discount/100), 2, '.', '');
                             $result[$courier->id_courier]['price_brut'] = number_format($result[$courier->id_courier]['price_net']+$result[$courier->id_courier]['price_net']*$GLOBALS['CONFIG']['vat']/100, 2, '.', '');
                         }
                     } catch(\Exception $e) {
@@ -96,7 +106,7 @@ class Tools {
                                 $price2 = $additional->getPrice($val[1]);
                                 
                                 if(is_numeric($price2)) {
-                                    $result[$courier->id_courier]['price_net'] = number_format($result[$courier->id_courier]['price_net'] + ($price2-$price2*$_SESSION['user']['discount']/100), 2, '.', '');
+                                    $result[$courier->id_courier]['price_net'] = number_format($result[$courier->id_courier]['price_net'] + ($price2-$price2*$discount/100), 2, '.', '');
                                     $result[$courier->id_courier]['price_brut'] = number_format($result[$courier->id_courier]['price_net']+$result[$courier->id_courier]['price_net']*$GLOBALS['CONFIG']['vat']/100, 2, '.', '');
                                 }
                             } catch(\Exception $e) {
@@ -114,7 +124,7 @@ class Tools {
                     $price = $additional->getPrice($val[1]);
                     if(is_numeric($price)) {
                         $courierId = $additional->getCourier();
-                        $result[$courierId]['price_net'] = number_format($result[$courierId]['price_net'] + ($price-$price*$_SESSION['user']['discount']/100), 2, '.', '');
+                        $result[$courierId]['price_net'] = number_format($result[$courierId]['price_net'] + ($price-$price*$discount/100), 2, '.', '');
                         $result[$courierId]['price_brut'] = number_format($result[$courierId]['price_net']+$result[$courierId]['price_net']*$GLOBALS['CONFIG']['vat']/100, 2, '.', '');
                         
                     }
@@ -132,7 +142,7 @@ class Tools {
                     $price = $additional->getPrice($val[1]);
                     if(is_numeric($price)) {
                         $courierId = $additional->getCourier();
-                        $result[$courier->id_courier]['price_net'] = number_format($result[$courier->id_courier]['price_net'] + ($price-$price*$_SESSION['user']['discount']/100), 2, '.', '');
+                        $result[$courier->id_courier]['price_net'] = number_format($result[$courier->id_courier]['price_net'] + ($price-$price*$discount/100), 2, '.', '');
                         $result[$courier->id_courier]['price_brut'] = number_format($result[$courier->id_courier]['price_net']+$result[$courier->id_courier]['price_net']*$GLOBALS['CONFIG']['vat']/100, 2, '.', '');
 
                     }

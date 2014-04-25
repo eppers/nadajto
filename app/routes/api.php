@@ -50,7 +50,7 @@ $app->post('/api/rate', function () use ($app) {
 
 
 $app->post('/api/ship', function () use ($app) {
-
+ 
     //czy user ma kase na koncie
     try {
         $request = $app->request();
@@ -102,7 +102,7 @@ $app->post('/api/ship', function () use ($app) {
             );
             $tools = new \lib\Tools();
             $result = $tools->prepareDataToShip($dataSend,$customer->id_customer, true);
-            print json_encode(array('faultstring'=>$result));
+            if(!$result) print json_encode(array('faultstring'=>$result));
         }
         
     } catch(Exception $e) {
@@ -114,39 +114,42 @@ $app->post('/api/ship', function () use ($app) {
     //die();
     
 
-//    if($result===true) {
-//        $user = $tools->customer;
-//        $order = $tools->order;
-//        $delivery = $tools->delivery;
-//
-//        $directory = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
-//        $myUrl = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? 'https://' : 'http://') . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] .$directory;
-//
-//        $orderName = 'Przesyłka kurierska';
-//
-//        if($user->prepays()->filter('sum')>=$order->price && $user->onetime==0) {
-//            try {
-//                $prepay = new \lib\Prepay();
-//                $prepay->addPrepayForOrder($order);
-//                $prepayId = $prepay->getId();
-//                
-//                if(!empty($prepayId)) {
-//                    SendMail($delivery->from_email, array('EMAIL'=>$delivery->from_email), 8);
-//                    SendMail('marcin.jastrzebski@poludniowo.pl', array('ID'=>$prepay->id_order), 9);
-//                    $courierManager = new \lib\CourierManager($order->id_courier);
-//                    $courier = $courierManager->getCourier();
-//                    if(!$courier->ship_from_db($order->id_order)) throw new Exception('Błąd w trakcie wysyłania danych kurierowi dla tego zamówienia. Skontakuj się z nadajto.');
-//                    else {
-//                        $result = array('prepay'=>'prepay');
-//                    }
-//                } else throw new Exception('Błąd w trakcie generowania zamówienia dla płatności PREPAY');
-//            } catch (Exception $e) {
-//                $result = array('error' => $e->getMessage());
-//            }
-//            
-//            echo json_encode($result);
-//            exit();
-//        }
-//    }
+    if($result===true) {
+        
+        $user = $tools->customer;
+        $order = $tools->order;
+        $delivery = $tools->delivery;
+
+        $directory = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
+        $myUrl = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? 'https://' : 'http://') . $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] .$directory;
+
+        $orderName = 'Przesyłka kurierska';
+
+        if($user->prepays()->filter('sum')>=$order->price && $user->onetime==0) {
+            try {
+                $prepay = new \lib\Prepay();
+                $prepay->addPrepayForOrder($order);
+                $prepayId = $prepay->getId();
+                
+                if(!empty($prepayId)) {
+                    
+                    SendMail($delivery->from_email, array('EMAIL'=>$delivery->from_email), 8);
+                    //SendMail('marcin.jastrzebski@poludniowo.pl', array('ID'=>$prepay->id_order), 9);
+                    $courierManager = new \lib\CourierManager($order->id_courier);
+                    $courier = $courierManager->getCourier();
+                    if(!$courier->ship_from_db($order->id_order)) throw new Exception('Błąd w trakcie wysyłania danych kurierowi dla tego zamówienia. Skontakuj się z nadajto.');
+                    else {
+                        $result = array('status'=>'success','msg'=>'Kurier zamówiony. Sprawdź skrzynkę email.');
+                    }
+                } else throw new Exception('Błąd w trakcie generowania zamówienia dla płatności PREPAY');
+            } catch (Exception $e) {
+                $result = array('faultstring'=> $e->getMessage());
+            }
+            
+            
+        } else  $result = array('faultstring'=> 'Brak środków na koncie. Doładuj je na nadajto.pl');
+        
+        echo json_encode($result);
+    }
 });        
 ?>

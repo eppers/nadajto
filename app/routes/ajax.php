@@ -1,14 +1,12 @@
 <?php
-/*
- * TODO jezeli beda rozne ceny dla roznych rozmiarow
- */
+
 session_start();
 $app->post('/form/price/update', function () use ($app) {
     //underline determinates if price will be update for one courier or more (courierName_typeOfAdditionalOption)
     //wyszukanie ceny danej uslugi i pomniejszenie sumy o wartosc tej uslugi
     
     $courier = new \lib\Tools;
-    $result = $courier->rate($app->request()->post());   
+    $result = $courier->rate($app->request()->post(), $_SESSION['user']['discount']);   
 
     //TODO przygotowac wersje updatujaca wiecej kurierow
      echo json_encode($result);
