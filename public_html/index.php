@@ -1,9 +1,9 @@
 <?php
 
-// if($_SERVER['REMOTE_ADDR']!='83.30.177.113' && $_SERVER['REMOTE_ADDR']!='91.237.155.12' )
-// {
-//	die(file_get_contents('index.html'));
-// }
+ if($_SERVER['REMOTE_ADDR']!='83.30.177.113' && $_SERVER['REMOTE_ADDR']!='91.237.155.12' )
+ {
+	die(file_get_contents('index.html'));
+ }
 
 
 

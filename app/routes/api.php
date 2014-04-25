@@ -30,6 +30,7 @@ $app->post('/api/rate', function () use ($app) {
     if(!empty($input['pkg_width']) && !empty($input['pkg_height']) && !empty($input['pkg_depth']) && !empty($input['pkg_weight']) ){
       $result = $courier->rate(array('form'=>$stringRate));
     //  file_put_contents('debug-api.txt',var_export($result,true));
+      if(is_array($result) && in_array('input',$result)) throw new Exception(implode(' ', $result));
       $respond['status'] = 'success';
       $respond['total'] = $result[1]['price_brut'];
       
@@ -102,11 +103,11 @@ $app->post('/api/ship', function () use ($app) {
             );
             $tools = new \lib\Tools();
             $result = $tools->prepareDataToShip($dataSend,$customer->id_customer, true);
-            if(!$result) print json_encode(array('faultstring'=>$result));
+            if(!$result) { $result=  implode (' ', $result); print json_encode(array('status'=>'fail','fault'=>$result));}
         }
         
     } catch(Exception $e) {
-        print json_encode(array('faultstring'=>$e->getMessage()));
+        print json_encode(array('fault'=>$e->getMessage()));
     }
    
     //print json_encode(var_export($app->request()->post(),true));
@@ -143,11 +144,11 @@ $app->post('/api/ship', function () use ($app) {
                     }
                 } else throw new Exception('Błąd w trakcie generowania zamówienia dla płatności PREPAY');
             } catch (Exception $e) {
-                $result = array('faultstring'=> $e->getMessage());
+                $result = array('fault'=> $e->getMessage());
             }
             
             
-        } else  $result = array('faultstring'=> 'Brak środków na koncie. Doładuj je na nadajto.pl');
+        } else  $result = array('fault'=> 'Brak środków na koncie. Doładuj je na nadajto.pl');
         
         echo json_encode($result);
     }
