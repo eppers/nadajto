@@ -461,16 +461,20 @@ class Tools {
                 else $date = date('Y-m-d');
             }
             $delivery->date = $date;
+            
         } else {
             if (strtotime($date) === false || strtotime($date." 12:00:00")<strtotime('now')) {
                 $error['input'][] = $date;
             } else {
                 if (date('N', strtotime($date)) >= 6)
-                    $delivery->date = date('Y-m-d', $date." +1 Weekday");
+                    $delivery->date = date('Y-m-d', strtotime($date." +1 Weekday"));
                 else
-                    $delivery->date = date('Y-m-d', $date);
+                    $delivery->date = date('Y-m-d', strtotime($date));
             }
+            
         }
+        
+        
         //TODO w zaleznosci od rodzaju przesylki wyswietla typ
 
 
